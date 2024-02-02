@@ -1,7 +1,7 @@
 const chalk = require('chalk');
 const readline = require('readline');
 const fs = require('fs');
-const file_path = './docker-compose.yml';
+const file_path = '../docker-compose.yml';
 
 (async () => 
 {
