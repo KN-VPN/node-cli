@@ -27,7 +27,14 @@ const docker_compose_template = `
 `
 
 
-
+function delete_inbound_ports(template)
+{
+    return template.split("\n").map(x=>
+    {
+        if(!x.includes("inbound_port_")) return x;
+        else return null;
+    }).filter((x) => x != null).join("\n");
+}   
 
 
 
@@ -39,11 +46,15 @@ function template_replace(template,key,value)
 
 async function init()
 {
+    var num_nodes = 1;
 
-    await fs.writeFile(file_path,"services:\n");
+    if(process.argv[2] != "add") 
+    {
+        await fs.writeFile(file_path,"services:\n");
+        console.log(chalk.greenBright('Enter number of nodes: '));
+        num_nodes = prompt();
+    }
 
-    console.log(chalk.greenBright('Enter number of nodes: '));
-    var num_nodes = prompt();
     for(var i=0;i<num_nodes;i++)
     {
         var template = docker_compose_template;
@@ -87,6 +98,8 @@ async function init()
             template = template_replace(template,'inbound_port_4_prime',inbound_port_4_prime);
 
         }
+
+        else template = delete_inbound_ports(template);
 
         console.log(chalk.greenBright('Enter Cert: '));
 
